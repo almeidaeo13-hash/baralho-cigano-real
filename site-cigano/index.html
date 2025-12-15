@@ -1,13 +1,15 @@
-<!DOCTYPE html>
+F<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baralho Cigano Real - Consulta</title>
+    <title>Baralho Cigano - Consulta</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#3a0000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="img/app.png">
     <link rel="icon" type="image/png" href="img/app.png">
 
@@ -16,9 +18,9 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            font-family: 'Lora', serif;
-            background: radial-gradient(circle at center, #5e0000 0%, #1a0000 100%);
-            color: #ffebd7;
+            font-family: 'Lora', serif; /* Fonte mais clássica e legível */
+            background: radial-gradient(circle at center, #5e0000 0%, #1a0000 100%); /* Vermelho Profundo */
+            color: #ffebd7; /* Cor Creme/Areia */
             min-height: 100vh;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             overflow-x: hidden; position: relative;
@@ -32,7 +34,7 @@
         #fogueira { position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
         .fagulha { 
             position: absolute; bottom: -10px; 
-            background: #ff4500;
+            background: #ff4500; /* Laranja Fogo */
             border-radius: 50%; opacity: 0; 
             box-shadow: 0 0 10px #ff4500;
             animation: subirFogo linear infinite; 
@@ -54,7 +56,7 @@
 
         .subtitulo { font-size: 1rem; color: #ffae00; margin-bottom: 40px; font-style: italic; }
 
-        /* Cartas Decorativas da Capa */
+        /* Cartas Decorativas */
         .mesa-capa { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; }
         .carta-visual {
             width: 80px; height: 130px;
@@ -65,25 +67,9 @@
             display: flex; align-items: center; justify-content: center;
         }
         .carta-visual::after { content: '⚜️'; font-size: 2rem; color: #d4af37; filter: drop-shadow(0 0 5px #000); }
-        
-        /* --- ANIMAÇÃO DE FLUTUAÇÃO (Copiado do seu CSS) --- */
-        .c1 { animation: flutuar1 4s ease-in-out infinite; }
-        .c2 { z-index: 2; animation: flutuar2 4s ease-in-out infinite 0.5s; }
-        .c3 { animation: flutuar3 4s ease-in-out infinite 1s; }
-
-        @keyframes flutuar1 {
-            0%, 100% { transform: rotate(-5deg) translateY(10px); }
-            50% { transform: rotate(-5deg) translateY(-5px); }
-        }
-        @keyframes flutuar2 {
-            0%, 100% { transform: rotate(0deg) translateY(-10px); }
-            50% { transform: rotate(0deg) translateY(-25px); }
-        }
-        @keyframes flutuar3 {
-            0%, 100% { transform: rotate(5deg) translateY(10px); }
-            50% { transform: rotate(5deg) translateY(-5px); }
-        }
-        /* ------------------------------------------ */
+        .c1 { transform: rotate(-5deg) translateY(10px); }
+        .c2 { transform: rotate(0deg) translateY(-10px); z-index: 2; }
+        .c3 { transform: rotate(5deg) translateY(10px); }
 
         .texto-reflexao {
             border: 1px solid rgba(212, 175, 55, 0.4);
@@ -101,7 +87,6 @@
             box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
             border: 2px solid #ffebcd;
             transition: transform 0.2s;
-            cursor: pointer;
         }
         .btn-pagar:hover { transform: scale(1.05); box-shadow: 0 0 35px rgba(212, 175, 55, 0.6); }
 
@@ -116,8 +101,8 @@
 
     <div id="fogueira"></div>
 
-    <div class="container" id="tela-inicial">
-        <h1>Baralho Cigano Real</h1>
+    <div class="container">
+        <h1>Baralho Cigano</h1>
         <div class="subtitulo">A verdade crua e direta sobre seu destino.</div>
         
         <div class="mesa-capa">
@@ -131,34 +116,32 @@
             <p><strong>Está preparado para ver o que está oculto no seu caminho?</strong></p>
         </div>
 
-        <a href="https://mpago.li/1EpxGHf" class="btn-pagar">
-            Consultar as Cartas (R$ 10,00)
-        </a>
+        <a href="https://mpago.la/1wH1xMF?auto_return=approved&external_reference=CIGANO_R10_INDEX&back_url=https://baralhociganoreal.com.br/oraculo.html" class="btn-pagar">
+    Consultar as Cartas (R$ 10,00)
+	</a>
 
         <div class="aviso-pix">
             ⚠️ <strong>Pagamento via Pix:</strong><br>
-            Lembre-se de clicar em <strong>"Voltar para o site"</strong> após o pagamento para desbloquear sua leitura!
+            Clique em <strong>"Voltar para o site"</strong> após pagar.
         </div>
     </div>
 
     <script>
-        // --- 1. CONFIGURAÇÃO DE FOGO ---
+        // Efeito de Fagulhas (Fogo)
         function acenderFogueira() {
             const container = document.getElementById('fogueira');
             for(let i=0; i < 35; i++) {
                 const p = document.createElement('div');
                 p.classList.add('fagulha');
                 p.style.left = Math.random() * 100 + '%';
-                p.style.width = Math.random() * 4 + 2 + 'px'; 
+                p.style.width = Math.random() * 4 + 2 + 'px'; // Tamanhos variados
                 p.style.height = p.style.width;
-                p.style.animationDuration = Math.random() * 2 + 3 + 's'; 
+                p.style.animationDuration = Math.random() * 2 + 3 + 's'; // Velocidade variada
                 p.style.animationDelay = Math.random() * 5 + 's';
                 container.appendChild(p);
             }
         }
         acenderFogueira();
-
-        // Removemos todo o código de jogo e as divs que ele controlava, mantendo o index.html leve e focado na venda.
     </script>
 </body>
 </html>
