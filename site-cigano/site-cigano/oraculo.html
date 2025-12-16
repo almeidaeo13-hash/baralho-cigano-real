@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#5e0000">
+    <link rel="icon" type="image/png" href="img/app.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <title>Baralho Cigano Real - O Oráculo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ESTILO MÍSTICO CIGANO (PREMIUM) --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Lora', serif;
+            background: radial-gradient(circle at center, #5e0000 0%, #1a0000 100%);
+            color: #ffebd7;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden; position: relative;
+            padding-bottom: 50px;
+        }
+
+        #fogueira { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .fagulha { position: absolute; background: #ff4500; border-radius: 50%; opacity: 0; animation: subirFogo linear infinite; }
+        @keyframes subirFogo { 0% { transform: translateY(100vh) scale(0); opacity: 0.8; } 100% { transform: translateY(-20vh) scale(0); opacity: 0; } }
+
+        .container { 
+            width: 95%; max-width: 800px; text-align: center; padding-bottom: 100px; 
+            z-index: 1; position: relative; 
+            display: flex; flex-direction: column; align-items: center;
+        }
+        
+        h1 {
+            font-family: 'Cinzel', serif; color: #ffcc00; font-size: 1.8rem;
+            margin-top: 20px; text-shadow: 0 0 10px #ff0000;
+        }
+
+        /* MESA */
+        .mesa { display: flex; justify-content: center; gap: 10px; margin: 30px auto; perspective: 1000px; }
+        .lugar-carta { width: 30%; max-width: 110px; display: flex; flex-direction: column; align-items: center; }
+        
+        .label-tempo { 
+            color: #d4af37; font-size: 0.7rem; margin-bottom: 8px; 
+            text-transform: uppercase; font-weight: bold; letter-spacing: 1px; 
+            border-bottom: 1px solid #d4af37; padding-bottom: 2px; text-shadow: 1px 1px 2px black;
+        }
+        
+        .carta {
+            width: 100%; aspect-ratio: 2/3.3; position: relative;
+            transform-style: preserve-3d; transition: transform 0.8s;
+            border-radius: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            cursor: pointer; 
+        }
+
+        .carta-ativa { animation: pulsarCarta 1.5s infinite alternate; border: 2px solid #ffcc00; }
+        @keyframes pulsarCarta { from { transform: translateY(0); box-shadow: 0 0 10px #ffcc00; } to { transform: translateY(-5px); box-shadow: 0 0 25px #ffcc00; } }
+        
+        .carta.virada { transform: rotateY(180deg); animation: none !important; border: none; }
+        
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; border: 1px solid #d4af37; }
+        
+        .frente { transform: rotateY(180deg); background: #1a0505; overflow: hidden; }
+        
+        /* FILTRO VINTAGE */
+        .frente img { 
+            width: 100%; height: 100%; object-fit: cover; 
+            filter: sepia(30%) contrast(110%) saturate(90%); 
+            border-radius: 7px;
+        }
+
+        .verso { 
+            background: #2a0000; 
+            background-image: repeating-linear-gradient(45deg, #3a0000 0, #3a0000 10px, #2a0000 10px, #2a0000 20px);
+            display: flex; align-items: center; justify-content: center; 
+            border: 2px solid #d4af37;
+        }
+        .verso::after { content: '⚜️'; color: #d4af37; font-size: 2rem; opacity: 0.8; filter: drop-shadow(0 2px 5px black); }
+
+        /* LEITURA */
+        #instrucao-oraculo { font-family: 'Cinzel', serif; color: #ffcc00; font-size: 1.2rem; margin: 30px 0; animation: fadeIn 1s; }
+        #resultado { display: none; text-align: left; margin-top: 20px; }
+        
+        .card-leitura { 
+            background: rgba(20, 0, 0, 0.9); border-left: 4px solid #d4af37; 
+            padding: 25px; margin-bottom: 30px; border-radius: 0 10px 10px 0;
+            animation: slideIn 0.8s ease-out; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .escondido { display: none; }
+        
+        .titulo-posicao { color: #ffcc00; font-family: 'Cinzel', serif; font-size: 1.3rem; margin-bottom: 5px; text-transform: uppercase; border-bottom: 1px solid #550000; padding-bottom: 10px; }
+        
+        .box-significado { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 5px; margin: 15px 0; font-style: italic; color: #aaa; font-size: 0.95rem; border-left: 2px solid #555; }
+        .label-tec { color: #d4af37; font-weight: bold; display: block; margin-bottom: 5px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .texto-humano { font-size: 1.15rem; line-height: 1.7; color: #ffebd7; margin-top: 15px; text-align: justify; }
+
+        /* CTA FINAL */
+        .cta-final { margin-top: 40px; padding: 30px; background: rgba(212, 175, 55, 0.05); border-radius: 10px; border: 1px dashed #d4af37; text-align: center; }
+        
+        .btn-novo { 
+            background: linear-gradient(135deg, #d4af37 0%, #aa8412 100%); 
+            color: #1a0000; padding: 15px 40px; border-radius: 50px; border: none;
+            font-family: 'Cinzel', serif; font-weight: bold; font-size: 1.1rem; cursor: pointer; 
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); transition: transform 0.2s;
+        }
+        .btn-novo:hover { transform: scale(1.05); }
+
+        .btn-tarot {
+            background: linear-gradient(135deg, #2e003e 0%, #4a148c 100%);
+            color: #bfaee3; padding: 12px 30px; border-radius: 50px; text-decoration: none;
+            display: inline-block; font-weight: bold; font-family: 'Cinzel', serif; font-size: 0.95rem;
+            border: 1px solid #bfaee3; margin-top: 15px; margin-bottom: 10px;
+            box-shadow: 0 0 15px rgba(74, 20, 140, 0.5); transition: transform 0.2s;
+        }
+        .btn-tarot:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(191, 174, 227, 0.7); color: white;}
+
+        /* BOTÃO INSTALAR APP (SÓ APARECE SE DISPONÍVEL) */
+        .btn-install {
+            display: none; /* Começa escondido */
+            background: #fff; color: #1a0000; 
+            padding: 10px 25px; border-radius: 50px; border: none;
+            font-weight: bold; font-family: 'Lora', sans-serif; cursor: pointer;
+            margin-top: 20px; box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+
+        /* --- TELA DE BLOQUEIO (Adicionada) --- */
+        #tela-bloqueio {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
+            background: radial-gradient(circle at center, #1a0000 0%, #000 100%); 
+            z-index: 3000;
+            display: none; 
+            flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
+            color: #ffebd7;
+        }
+        .aviso-bloqueio {
+            border: 1px solid #ffcc00; padding: 40px; border-radius: 10px; 
+            max-width: 400px;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        .aviso-bloqueio h2 { color: #ffcc00; margin-bottom: 15px; font-family: 'Cinzel', serif; }
+        .btn-pagar-voltar {
+            background: linear-gradient(to bottom, #d4af37, #aa8412);
+            color: #1a0000; padding: 15px 30px; border-radius: 50px; text-decoration: none;
+            font-weight: bold; font-family: 'Cinzel', serif; margin-top: 25px; display: inline-block;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="musica-fundo" loop><source src="musica.mp3" type="audio/mpeg"></audio>
+    <audio id="som-carta"><source src="virar.mp3" type="audio/mpeg"></audio>
+    <div id="fogueira"></div>
+
+    <div id="tela-bloqueio" style="display: none;">
+        <div class="aviso-bloqueio">
+            <h2>Consulta Exclusiva Bloqueada</h2>
+            <p>A sabedoria do Baralho Cigano é poderosa e requer sua energia (R$ 10,00) para ser liberada.</p>
+            <p style="margin-top: 15px;">Para desbloquear sua leitura imediata de 3 cartas, use o botão para retornar à página de pagamento:</p>
+            <a href="index.html" class="btn-pagar-voltar">
+                Voltar e Pagar para Consultar
+            </a>
+        </div>
+    </div>
+
+    <div class="container" id="tela-jogo" style="display: none;">
+        <h1>Baralho Cigano Real</h1>
+        
+        <div class="mesa">
+            <div class="lugar-carta"><span class="label-tempo">1. Situação</span><div class="carta" id="carta0" onclick="interagirCarta(0)"><div class="face verso"></div><div class="face frente"><img id="img0" src=""></div></div></div>
+            <div class="lugar-carta"><span class="label-tempo">2. Desafio</span><div class="carta" id="carta1" onclick="interagirCarta(1)"><div class="face verso"></div><div class="face frente"><img id="img1" src=""></div></div></div>
+            <div class="lugar-carta"><span class="label-tempo">3. Conselho</span><div class="carta" id="carta2" onclick="interagirCarta(2)"><div class="face verso"></div><div class="face frente"><img id="img2" src=""></div></div></div>
+        </div>
+
+        <div id="instrucao-oraculo">Carregando a sabedoria...</div>
+
+        <div id="resultado">
+            <div id="leitura-passado" class="card-leitura escondido"></div>
+            <div id="leitura-presente" class="card-leitura escondido"></div>
+            <div id="leitura-futuro" class="card-leitura escondido"></div>
+
+            <div id="cta-final-box" class="cta-final escondido">
+                <p style="font-size: 1.1rem; margin-bottom: 20px; font-style: italic;">"O destino embaralha as cartas, mas nós escolhemos o caminho."</p>
+                
+                <button class="btn-novo" onclick="window.location.href = 'index.html';">Nova Consulta</button> 
+
+                <br>
+                <button id="btn-install" class="btn-install">📲 Instalar Aplicativo</button>
+
+                <div style="margin-top: 30px; border-top: 1px dashed #d4af37; padding-top: 20px;">
+                    <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 10px;">Busca uma orientação cósmica mais profunda?</p>
+                    <a href="https://tarortestelar.netlify.app" target="_blank" class="btn-tarot">
+                        🔮 Experimente o Tarot Estelar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // --- LÓGICA DO PWA (INSTALAR APP) ---
+    // 1. Registra o Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').then(reg => console.log('SW registrado')).catch(err => console.log('Erro SW:', err));
+        });
+    }
+
+    // 2. Captura o evento de instalação
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const btn = document.getElementById('btn-install');
+        btn.style.display = 'inline-block';
+        
+        btn.addEventListener('click', () => {
+            btn.style.display = 'none';
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                deferredPrompt = null;
+            });
+        });
+    });
+
+    // --- DADOS DAS CARTAS (36 CARTAS) ---
+    const baralhoCigano = [
+        { nome: "O Cavaleiro (1)", significado: "Movimento, ação, chegada de novidades e a energia masculina de concretização.", conselhos: ["Preste muita atenção agora: a vida está te pedindo movimento. O Cavaleiro não é uma carta de espera, é uma carta de ação! Vá atrás do que você quer com coragem.", "Olha, tem novidade chegando rápido na sua vida. Pode ser uma pessoa, uma notícia ou uma oportunidade. Não fique parada, acompanhe esse ritmo.", "Sabe aquele projeto ou aquela conversa que você vem adiando? A hora é agora. Use sua racionalidade e seu impulso para resolver o que precisa ser resolvido."] },
+        { nome: "O Trevo (2)", significado: "Pequenos obstáculos passageiros, mas também a sorte que surge das dificuldades. Representa a necessidade de otimismo e leveza.", conselhos: ["Minha querida, não desanime por causa de pedras pequenas no caminho. Esse problema que surgiu é passageiro. Mantenha o seu bom humor e confie.", "Cuidado para não fazer uma tempestade em copo d'água. Respire fundo. Essa dificuldade veio apenas para te ensinar algo rápido.", "Sabe aquela sorte inesperada? Ela costuma aparecer logo depois de um pequeno tropeço. Olhe para as oportunidades que estão disfarçadas de problemas hoje."] },
+        { nome: "O Navio (3)", significado: "Novos horizontes, viagens, mudanças de rumo e a necessidade de explorar o desconhecido.", conselhos: ["Sinto que sua alma está pedindo mudança. O Navio aparece quando o lugar onde estamos ficou pequeno. Levante a âncora e navegue. Não tenha medo.", "Às vezes a solução não está aqui perto, mas sim longe. Busque coisas novas, pessoas novas, lugares novos. O momento favorece a movimentação.", "Você está entrando em uma jornada de transformação lenta, mas constante. Tenha paciência com o processo e aproveite a viagem."] },
+        { nome: "A Casa (4)", significado: "Lar, família, segurança, equilíbrio emocional e a estrutura física. Fala sobre buscar refúgio e fortalecer as bases.", conselhos: ["Neste momento, o seu refúgio é o mais importante. Olhe para o seu lar e para a sua família, é ali que você vai encontrar a paz e a resposta que procura.", "Não é hora de aventuras arriscadas. Busque segurança e estabilidade. Fortaleça suas bases, cuide do seu corpo e do seu equilíbrio emocional.", "Talvez você precise organizar sua vida doméstica ou resolver pendências familiares. A energia da Casa nos lembra que só podemos crescer se nossas raízes estiverem firmes."] },
+        { nome: "A Árvore (5)", significado: "Vitalidade, saúde, crescimento lento e raízes profundas. Indica prosperidade a longo prazo e conexão com a ancestralidade.", conselhos: ["Tenha paciência. A natureza não dá saltos. A Árvore nos ensina que tudo tem o tempo certo para crescer e dar frutos. Cuide da sua saúde e dos seus projetos.", "Como está a sua vitalidade? Essa carta pede uma atenção especial à sua saúde física e espiritual. Conecte-se mais com a natureza.", "Essa carta fala sobre criar raízes. O que você está plantando hoje vai durar por muito tempo. Por isso, escolha bem as sementes (seus pensamentos e ações)."] },
+        { nome: "As Nuvens (6)", significado: "Instabilidade, confusão mental, dúvidas e falta de clareza. Representa um momento passageiro onde não conseguimos ver a verdade.", conselhos: ["Não tome nenhuma decisão importante hoje. As Nuvens avisam que sua visão está turva e você pode se enganar. Espere o vento soprar e o céu limpar.", "Cuidado com os pensamentos negativos. O que você está vendo agora como um grande problema pode ser apenas uma ilusão causada pela ansiedade. Acalme sua mente.", "Se as coisas parecerem incertas ou confusas no relacionamento ou trabalho, não force a barra. O melhor conselho agora é observar e esperar."] },
+        { nome: "A Serpente (7)", significado: "Alerta sobre traição, falsidade, inveja ou armadilhas. Também representa a sensualidade e a sabedoria de saber se defender e contornar problemas.", conselhos: ["Abra bem os olhos! A Serpente é um aviso claro: nem todo mundo que sorri para você quer o seu bem. Não conte seus planos e sonhos para ninguém. Proteja-se.", "Use sua astúcia. Para sair dessa situação, você precisa ser estratégica, flexível e inteligente como a serpente. Observe mais e fale menos.", "Use a sabedoria da Serpente para trocar de pele: deixe para trás velhos comportamentos que só te machucam e renasça mais forte."] },
+        { nome: "O Caixão (8)", significado: "Fim de um ciclo, perdas necessárias, transformação radical e renascimento.", conselhos: ["Não tenha medo do fim. Algo na sua vida precisa acabar para que o novo possa nascer. Solte o peso morto. Enquanto você segurar o passado, não receberá o futuro.", "É um momento de transformação profunda. Aceite as mudanças, mesmo que sejam dolorosas. A vida está fazendo uma limpeza necessária no seu caminho.", "O que vai embora agora já cumpriu seu papel. Recolha-se, descanse e prepare-se para o seu renascimento. A energia estagnada está sendo removida."] },
+        { nome: "O Buquê (9)", significado: "Felicidade, presentes, surpresas agradáveis, beleza e harmonia. Representa a gratidão e o lado doce da vida.", conselhos: ["Sorria, porque a vida está sorrindo para você! Uma surpresa agradável, um presente ou um gesto de carinho está chegando. Abra seu coração para receber.", "O conselho é trazer mais beleza e leveza para o seu dia. A energia da beleza atrai prosperidade e amor. Permita-se ser feliz.", "Sabe aquele desejo antigo? O universo está conspirando para realizá-lo. As energias estão harmoniosas e favoráveis. Aproveite essa fase doce da vida."] },
+        { nome: "A Foice (10)", significado: "Corte brusco necessário, uma decisão difícil, rompimento ou colheita. É a necessidade de eliminar o que não serve mais de forma rápida.", conselhos: ["Chegou a hora de cortar o mal pela raiz. A Foice pede uma atitude rápida e definitiva. Pode doer na hora, mas será um alívio depois.", "Essa é a carta da colheita. Aceite o fim desse ciclo e não tente colar o que já quebrou.", "Cuidado com acidentes ou palavras afiadas. O momento pede cirurgia na alma: remova o que está adoecendo sua vida."] },
+        { nome: "O Chicote (11)", significado: "Conflitos, disputas, magia, força física e sexualidade. Alerta para o risco de discussões e sofrimento repetitivo.", conselhos: ["Cuidado para não perder a razão. O Chicote traz uma energia de briga e discussão. Respire fundo e conte até dez antes de responder. Seja firme, não agressiva.", "Você pode estar vivendo um ciclo vicioso. Use sua força de vontade para quebrar esse padrão agora. Você tem o poder na mão.", "Há uma energia sexual ou mágica muito forte no ar. Canalize essa intensidade para o seu trabalho ou para resolver problemas difíceis, em vez de gastar energia brigando."] },
+        { nome: "Os Pássaros (12)", significado: "Comunicação, fofocas, ansiedade, paqueras e parcerias temporárias. Representa o barulho do dia a dia e a liberdade.", conselhos: ["A comunicação é a chave de tudo agora. Fale, converse, exponha o que sente, mas faça isso com leveza. Cuidado com a fofoca.", "Sinto que você está um pouco ansiosa, com a cabeça voando em mil lugares. Os Pássaros pedem calma. Não tente resolver tudo de uma vez. Foque no agora.", "É um bom momento para socializar, namorar e fazer parcerias. A vida deve ser leve! Permita-se voar um pouco e deixar a tristeza de lado."] },
+        { nome: "A Criança (13)", significado: "Inocência, pureza, novos começos, imaturidade e esperança. Indica o início de algo com potencial de crescimento.", conselhos: ["Encare essa situação com o coração puro de uma criança. A vida está te oferecendo um novo começo. Tenha esperança e curiosidade para aprender tudo de novo.", "Cuidado com a ingenuidade ou a imaturidade. Agimos sem pensar nas consequências. Seja leve, mas assuma suas responsabilidades de adulto.", "Se você tem filhos ou quer engravidar, essa carta é um sinal forte. Cuide desse início com amor e dedicação."] },
+        { nome: "A Raposa (14)", significado: "Alerta para armadilhas, esperteza, estratégia e desconfiança. Pede cautela com quem está ao redor e uso da inteligência.", conselhos: ["Não seja ingênua! A Raposa avisa que tem armadilha no caminho. Alguém pode estar querendo te usar ou a situação não é tão boa quanto parece. Proteja-se.", "O momento pede estratégia, não emoção. Planeje cada passo, observe o terreno e só aja quando tiver certeza. O silêncio é sua melhor arma agora.", "Cuidado com 'amigos' que só aparecem quando precisam de algo. Defenda o que é seu com inteligência e não se deixe levar por bajulação."] },
+        { nome: "O Urso (15)", significado: "Força, poder, proteção, mas também ciúmes e possessividade. Pode indicar uma figura de autoridade influente.", conselhos: ["Você tem uma força interior gigante. O Urso diz para você se impor! Defenda seu território e suas ideias com garra. Assuma o poder da sua própria vida.", "Cuidado com o excesso de proteção ou ciúmes sufocantes. Saiba dosar sua força para não esmagar quem está ao seu lado. Controle seus impulsos possessivos.", "Cuide da sua 'energia vital' e da sua alimentação. Para enfrentar os desafios que vêm por aí, você precisa estar forte e bem nutrida."] },
+        { nome: "A Estrela (16)", significado: "Sorte, proteção espiritual, esperança e êxito. Indica que você está no caminho certo e tem ajuda divina.", conselhos: ["Erga a cabeça e tenha fé! Você está protegida pela espiritualidade e sua intuição é seu melhor guia. Confie no seu brilho pessoal, pois o sucesso é questão de tempo.", "Não perca a esperança. Mesmo que a noite esteja escura, a sua estrela está brilhando. Mantenha o pensamento positivo, pois você é um ímã de coisas boas agora.", "Você tem um talento ou um dom que precisa ser compartilhado com o mundo. Mostre quem você é de verdade. Sua luz vai inspirar outras pessoas."] },
+        { nome: "A Cegonha (17)", significado: "Novidades, mudanças positivas, gravidez, nascimento e renovação. Indica que a rotina será quebrada por algo bom.", conselhos: ["Prepare-se para novidades! A mesmice está com os dias contados. A Cegonha traz ventos de mudança para sua vida. Aceite o novo de braços abertos, pois será para melhor.", "Não tenha medo de mudar de rota. Se as coisas não estão boas, a Cegonha diz: voe para outro lugar! A flexibilidade é sua aliada agora.", "Essa é a carta da fertilidade e do nascimento. Pode indicar a chegada de um bebê ou o nascimento de um projeto criativo. Cuide desse novo ciclo com amor e dedicação."] },
+        { nome: "O Cão (18)", significado: "Lealdade, amizade verdadeira, apoio e confiança. Indica que você não está sozinho e pode contar com ajuda.", conselhos: ["Você não precisa carregar o mundo nas costas sozinha. Tem gente leal ao seu lado pronta para ajudar. Peça apoio. A união faz a força e a amizade será sua salvação agora.", "Seja fiel aos seus princípios e às pessoas que te amam. A lealdade é a moeda mais valiosa neste momento. O universo recompensa quem tem coração leal.", "Fique alerta e proteja quem você ama, mas saiba diferenciar quem é amigo de verdade. Se seu instinto diz que alguém não é confiável, acredite nele."] },
+        { nome: "A Torre (19)", significado: "Isolamento, espiritualidade, reflexão interior e estrutura. Pede um momento de recolhimento para encontrar respostas dentro de si.", conselhos: ["O barulho do mundo lá fora está te confundindo. A Torre pede que você se recolha um pouco. As respostas que você procura estão no silêncio da sua própria alma.", "É hora de elevar seus pensamentos. Saia da confusão do dia a dia e tente ver a situação de cima, com mais sabedoria e menos emoção. Cuide da sua espiritualidade.", "Talvez você se sinta um pouco solitária, mas use esse tempo para estruturar sua vida e seus planos longe da opinião alheia."] },
+        { nome: "O Jardim (20)", significado: "Vida social, o público, a colheita do que se plantou e a expansão. Indica que é hora de sair da toca e se mostrar.", conselhos: ["Saia da toca! O Jardim diz que o mundo quer te ver. É hora de socializar, encontrar pessoas, fazer networking. Vá para onde as pessoas estão.", "Cuide da sua imagem. Mostre seu trabalho, plante sementes de gentileza e beleza. O momento é de colheita: o que você plantou lá atrás, agora começará a dar frutos públicos.", "A cura vem do contato com o belo e com a natureza. A vida social te trará alegrias e soluções inesperadas. Aceite aquele convite que você estava pensando em recusar."] },
+        { nome: "A Montanha (21)", significado: "Grandes desafios, bloqueios, inimigos e justiça. Representa um obstáculo que exige esforço e persistência para ser superado.", conselhos: ["Não vou mentir, tem uma montanha no seu caminho. Mas a Montanha não está aí para te parar, ela está aí para te fazer subir e evoluir. Não desista. Escale com paciência e fé.", "Justiça e equilíbrio. Se você agiu corretamente, a Montanha é sua aliada e te dará solidez. Não tente atalhos, o único jeito de vencer agora é pelo esforço real.", "Pode haver atrasos e bloqueios. Use essa pausa forçada para planejar melhor a subida. A vista lá de cima é linda, mas exige suor. Persista."] },
+        { nome: "O Caminho (22)", significado: "Escolhas, dúvidas, livre-arbítrio e encruzilhadas. Indica que o destino está em suas mãos e você precisa decidir.", conselhos: ["Você chegou numa encruzilhada. Não dá mais para ficar em cima do muro. A vida exige uma escolha. Decida e siga!", "Existem várias saídas para o seu problema. Se um caminho está fechado, olhe para o lado, tem outro aberto. Não insista em bater na porta que não abre.", "A dúvida é o seu maior inimigo agora. Ela paralisa. O Caminho te diz: qualquer direção é melhor que ficar parada. Pegue o volante do seu destino."] },
+        { nome: "O Rato (23)", significado: "Desgastes, roubos, perdas de energia, estresse e doenças. Indica que algo está te consumindo aos poucos.", conselhos: ["Atenção máxima! Algo ou alguém está 'roendo' sua energia, seu dinheiro ou sua paciência. Identifique onde está esse vazamento e feche agora. Não ignore os pequenos problemas.", "Cuidado com o estresse e a preocupação excessiva. Você está se desgastando demais por coisas que talvez nem aconteçam. Cuide da sua saúde e poupe seus recursos.", "Essa carta pede limpeza. Limpe sua casa, jogue fora o que não serve. E faça uma limpeza mental também: pare de alimentar pensamentos que te diminuem."] },
+        { nome: "O Coração (24)", significado: "Amor, paixão, entrega e emoções verdadeiras. Indica que a resposta deve vir do sentimento, não da razão.", conselhos: ["Entregue-se ao que você sente! O Coração diz que a resposta para sua pergunta é o Amor. Coloque paixão no que faz. Hoje quem manda é a emoção sincera.", "Faça as pazes com seus sentimentos. Se houve mágoa, perdoe para se libertar. Seja generosa e carinhosa. O amor cura tudo.", "Um novo amor ou a renovação de uma paixão antiga está no ar. Permita-se ser feliz e viver esse momento intensamente. Diga 'eu te amo', abrace, cuide."] },
+        { nome: "O Anel (25)", significado: "União, compromisso, casamento, contratos e parcerias duradouras. Representa um vínculo forte e cíclico.", conselhos: ["É hora de firmar compromisso. O momento pede seriedade no amor ou nos negócios. Junte forças com alguém, pois a parceria será muito mais forte.", "Cuidado para não ficar rodando em círculos na mesma situação. Renove seus votos consigo mesma e com seus objetivos. A lealdade e a palavra dada são fundamentais.", "Algo valioso e duradouro está chegando. Alie-se a quem tem os mesmos objetivos que você. A união faz a força e traz estabilidade."] },
+        { nome: "O Livro (26)", significado: "Segredos, mistérios, estudos e trabalho intelectual. Indica que nem tudo foi revelado e que é preciso buscar conhecimento.", conselhos: ["Não conte seus segredos! O Livro está fechado, o que significa que o silêncio é de ouro agora. Trabalhe em silêncio e deixe que seu sucesso faça barulho depois. Alguém pode estar escondendo algo de você.", "Estude mais sobre a situação. A solução para o seu problema está no conhecimento e na sabedoria. Talvez seja hora de fazer um curso ou se especializar.", "Há mistérios no ar. Nem tudo é o que parece e o destino ainda não revelou todas as cartas. Tenha cautela e aguarde. O que está oculto será revelado na hora certa."] },
+        { nome: "A Carta (27)", significado: "Notícias, mensagens, documentos, avisos e revelações. Indica que uma informação importante está a caminho.", conselhos: ["Fique atenta ao seu telefone e e-mail. Uma notícia importante está chegando e vai trazer a resposta que você espera. A comunicação é a chave agora.", "É hora de colocar tudo no papel. Documente, oficialize, escreva. Expresse-se.", "Segredos podem ser revelados. A Carta traz à luz o que estava guardado. Use essa informação com sabedoria para destravar sua vida. O momento é de definição e clareza."] },
+        { nome: "O Cigano (28)", significado: "Figura masculina, o consulente (se homem) ou a energia racional e ativa. Pede postura firme.", conselhos: ["Use a razão e a lógica. O momento não pede sentimentalismo, pede atitude firme. Encare o problema de frente e tome as rédeas da situação.", "Uma figura masculina importante terá papel decisivo nessa questão. Ouça o que ele tem a dizer. Se você busca um amor, essa carta indica a presença de um homem significativo.", "Seja protagonista da sua vida. Tenha iniciativa, planeje e execute. A força para vencer está nas suas mãos."] },
+        { nome: "A Cigana (29)", significado: "Figura feminina, a consulente (se mulher) ou a energia intuitiva e emocional. Pede sensibilidade.", conselhos: ["Use sua intuição e sensibilidade. A força bruta não vai resolver nada agora. Você precisa ser diplomática e inteligente emocionalmente. Sinta o ambiente e confie no seu sexto sentido.", "Uma mulher importante influenciará a situação. A energia feminina de acolhimento e nutrição é a chave. Cuide de si mesma e dos outros com carinho.", "Seja flexível e misteriosa. Não entregue todo o jogo de cara. Use seu magnetismo pessoal para atrair o que deseja. O silêncio e um olhar dizem mais que mil palavras."] },
+        { nome: "Os Lírios (30)", significado: "Paz, tranquilidade, sabedoria, pureza e frieza. Indica um período de calmaria e maturidade.", conselhos: ["Mantenha a calma e a serenidade. Perder a cabeça não vai ajudar em nada. Aja com a sabedoria de quem sabe que tudo tem seu tempo. Respire fundo e relaxe.", "Busque a virtude e a ética. Sua consciência limpa é seu maior tesouro. Talvez seja bom esfriar a cabeça e se distanciar emocionalmente para decidir melhor.", "Harmonia e proteção divina. Você está entrando numa fase de vida mais tranquila e abençoada. Aproveite para descansar. A felicidade calma é a mais duradoura."] },
+        { nome: "O Sol (31)", significado: "Vitória, sucesso, clareza, energia vital e calor. É o grande 'Sim' do baralho, trazendo luz para as sombras.", conselhos: ["Vitória total! O Sol brilha para você, dissipando todas as sombras. É o momento de brilhar e de ser feliz. O sucesso é garantido se você agir com verdade e otimismo.", "Tudo vai ficar claro. Se havia mentiras ou segredos, a luz do Sol vai revelar a verdade. Encha-se de energia vital, cuide da sua saúde.", "Prosperidade e abundância. O universo está te enviando uma carga extra de energia positiva. Use isso para expandir seus projetos e sua vida. O palco é seu e o momento é de glória."] },
+        { nome: "A Lua (32)", significado: "Intuição, magia, romantismo, reconhecimento e fases. Alerta para ilusões, mas também para a profundidade emocional.", conselhos: ["Honre sua intuição e seus sentimentos. A Lua diz que nem tudo é o que parece sob a luz do dia. O mundo espiritual está tentando falar com você.", "Cuidado com as ilusões. Não deixe o medo ou a fantasia distorcerem a realidade. Mantenha os pés no chão. O romantismo é bom, mas exige cautela.", "Você receberá reconhecimento pelo seu talento. Mas lembre-se que a Lua tem fases: a vida é cíclica. Saiba se recolher na minguante."] },
+        { nome: "A Chave (33)", significado: "Solução, abertura de caminhos, livre-arbítrio e sucesso. Indica que você tem a ferramenta para resolver o problema.", conselhos: ["A solução está nas suas mãos! Você tem a Chave. Não espere que a porta se abra sozinha, vá lá e destranque. Tome a atitude necessária, pois o poder de decidir o seu destino é todo seu.", "Fim dos bloqueios. O que estava travado vai andar. A Chave traz a resposta que faltava para o seu quebra-cabeça. Você encontrou a saída.", "Seja proativa. O destino te deu a oportunidade, mas você precisa girar a chave. Se quer fechar um ciclo, tranque a porta e jogue a chave fora. A decisão é sua."] },
+        { nome: "Os Peixes (34)", significado: "Dinheiro, prosperidade, abundância material e multiplicação. Indica fluxo financeiro e satisfação.", conselhos: ["O dinheiro vai fluir! Os Peixes trazem a mensagem de prosperidade e abundância material. É um ótimo momento para negócios, vendas e investimentos.", "Assim como os peixes no mar, as oportunidades estão se multiplicando. Movimente-se, faça o dinheiro circular. Nade a favor da correnteza da prosperidade.", "Além do dinheiro, essa carta fala de profundidade emocional e satisfação. Mergulhe fundo nos seus projetos, não fique na superfície. O tesouro está no fundo."] },
+        { nome: "A Âncora (35)", significado: "Segurança, estabilidade, fé e trabalho fixo. Indica algo que veio para ficar, mas alerta para o risco de estagnação.", conselhos: ["Você encontrou um porto seguro. A Âncora diz que a situação é estável e firme. Mantenha-se firme nos seus propósitos e tenha fé. Nada vai te derrubar agora.", "Cuidado para não ficar parada demais. Estabilidade é bom, mas estagnação não. Saiba a hora de levantar a âncora e seguir viagem. Não se prenda ao passado por medo.", "Dedicação e trabalho duro. O sucesso vem da constância. Escolha um objetivo e ancore nele. Sua fé e sua persistência serão recompensadas com uma realização sólida."] },
+        { nome: "A Cruz (36)", significado: "Vitória após o sofrimento, destino, karma e fé. Indica o fim de uma provação difícil e o triunfo do espírito.", conselhos: ["Vitória! O sofrimento serviu para te fortalecer e limpar seu karma. O ciclo de dor se encerra e você sai vitoriosa.", "Tenha fé inabalável. O que está acontecendo é guiado por forças maiores (destino). A provação está no fim. Acredite.", "Você está pagando suas dívidas espirituais e se libertando. O sacrifício de hoje será a sua glória de amanhã. Siga com a cabeça erguida e o coração em paz."] }
+    ];
+
+    // --- LÓGICA DO ORÁCULO ---
+    let sorteio = [];
+    let etapaAtual = 0;
+
+    function iniciarOraculo() {
+        const indices = Array.from({length: 36}, (_, i) => i);
+        sorteio = indices.sort(() => Math.random() - 0.5).slice(0, 3);
+        
+        // Imagens: img/00.png até img/35.png
+        document.getElementById('img0').src = `img/${String(sorteio[0]).padStart(2, '0')}.png`;
+        document.getElementById('img1').src = `img/${String(sorteio[1]).padStart(2, '0')}.png`;
+        document.getElementById('img2').src = `img/${String(sorteio[2]).padStart(2, '0')}.png`;
+
+        document.getElementById('resultado').style.display = 'block';
+        etapaAtual = 0;
+        
+        // --- SUSPENSE (7 segundos) ---
+        document.getElementById('instrucao-oraculo').innerHTML = "Sinta o calor da fogueira, feche os olhos e mentalize a verdade que você busca. A Cigana te aguarda.";
+        
+        setTimeout(() => {
+             // 1. Muda a mensagem
+            document.getElementById('instrucao-oraculo').innerHTML = "O momento chegou. Toque na primeira carta para cortar e revelar seu destino.";
+             // 2. Ativa a primeira carta
+            document.getElementById('carta0').classList.add('carta-ativa');
+        }, 7000); // 7 segundos de suspense
+
+        // Esconde leituras e botões
+        ['leitura-passado', 'leitura-presente', 'leitura-futuro', 'cta-final-box'].forEach(id => {
+            document.getElementById(id).classList.add('escondido');
+        });
+    }
+
+    function interagirCarta(index) {
+        if (index !== etapaAtual) return;
+
+        if (index === 0) {
+            const m = document.getElementById('musica-fundo'); m.volume=0.3; m.play().catch(e=>{});
+        }
+        const s = document.getElementById('som-carta'); s.currentTime=0; s.play().catch(e=>{});
+
+        document.getElementById(`carta${index}`).classList.remove('carta-ativa');
+        
+        const divs = ['leitura-passado', 'leitura-presente', 'leitura-futuro'];
+        const titulos = ['1. A Situação', '2. O Desafio', '3. O Conselho'];
+        
+        virarCarta(index, divs[index], titulos[index]);
+
+        if (index < 2) {
+            etapaAtual++;
+            document.getElementById(`carta${etapaAtual}`).classList.add('carta-ativa');
+            document.getElementById('instrucao-oraculo').innerHTML = "Revele a próxima carta...";
+            setTimeout(() => { document.getElementById(divs[index]).scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 500);
+        } else {
+            etapaAtual = 3;
+            document.getElementById('instrucao-oraculo').innerHTML = "Leitura Finalizada.";
+            setTimeout(() => { document.getElementById(divs[index]).scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 500);
+            setTimeout(() => {
+                document.getElementById('cta-final-box').classList.remove('escondido');
+                document.getElementById('cta-final-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 2000);
+        }
+    }
+
+    function virarCarta(index, divId, titulo) {
+        const cartaElement = document.getElementById(`carta${index}`);
+        cartaElement.classList.add('virada');
+        
+        const cartaData = baralhoCigano[sorteio[index]];
+        
+        const textoSorteado = cartaData.conselhos[Math.floor(Math.random() * cartaData.conselhos.length)];
+
+        const div = document.getElementById(divId);
+        div.innerHTML = `
+            <div class="titulo-posicao">${titulo}</div>
+            
+            <span class="label-tec">A Carta Revelada:</span>
+            <h3 style="margin-top:0;">${cartaData.nome}</h3>
+            
+            <div class="box-significado">
+                <strong>O que a carta significa:</strong><br>
+                ${cartaData.significado}
+            </div>
+
+            <p class="texto-humano">${textoSorteado}</p>
+        `;
+        div.classList.remove('escondido');
+    }
+
+    // --- LÓGICA DE BLOQUEIO E INÍCIO ---
+    window.onload = function() {
+        // Inicializa o efeito de partículas de fogo
+        const container = document.getElementById('fogueira');
+        for(let i=0; i<40; i++) {
+            const p = document.createElement('div');
+            p.classList.add('fagulha');
+            p.style.left = Math.random()*100+'%'; 
+            p.style.width = Math.random()*4+2+'px'; 
+            p.style.height = p.style.width;
+            p.style.animationDuration = Math.random()*3+2+'s';
+            p.style.animationDelay = Math.random()*5+'s';
+            container.appendChild(p);
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        // Aceita 'approved' (Gateway) OU 'true' (Teste Local)
+        const statusPagamento = urlParams.get('status');
+        
+        if (statusPagamento === 'approved' || statusPagamento === 'true') {
+            document.getElementById('tela-bloqueio').style.display = 'none';
+            document.getElementById('tela-jogo').style.display = 'flex'; // Exibe o jogo (flex para centralizar)
+            iniciarOraculo();
+        } else {
+            // Se não tiver status=approved/true, mostra a tela de bloqueio
+            document.getElementById('tela-bloqueio').style.display = 'flex';
+            document.getElementById('tela-jogo').style.display = 'none';
+        }
+    };
+    </script>
+</body>
+</html>
