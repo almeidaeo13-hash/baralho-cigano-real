@@ -1,7 +1,7 @@
 {
-  "name": "Baralho Cigano",
-  "short_name": "Cigano",
-  "start_url": "/index.html",
+  "name": "Baralho Cigano Real",
+  "short_name": "Cigano Real",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#5e0000",
   "theme_color": "#5e0000",
