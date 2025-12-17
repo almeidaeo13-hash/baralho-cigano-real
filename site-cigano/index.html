@@ -1,10 +1,10 @@
-F<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baralho Cigano - Consulta</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:ital,wght@400;700&display=swap" rel="stylesheet">
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#3a0000">
@@ -18,23 +18,21 @@ F<!DOCTYPE html>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            font-family: 'Lora', serif; /* Fonte mais clássica e legível */
-            background: radial-gradient(circle at center, #5e0000 0%, #1a0000 100%); /* Vermelho Profundo */
-            color: #ffebd7; /* Cor Creme/Areia */
+            font-family: 'Lora', serif;
+            background: radial-gradient(circle at center, #5e0000 0%, #1a0000 100%);
+            color: #ffebd7;
             min-height: 100vh;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             overflow-x: hidden; position: relative;
         }
 
-        /* Bordas Douradas Laterais */
         body::before { content: ''; position: fixed; top: 0; left: 0; height: 100%; width: 10px; background: linear-gradient(to right, #d4af37, transparent); opacity: 0.3; }
         body::after { content: ''; position: fixed; top: 0; right: 0; height: 100%; width: 10px; background: linear-gradient(to left, #d4af37, transparent); opacity: 0.3; }
 
-        /* Partículas de Fogo (Fagulhas) */
         #fogueira { position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
         .fagulha { 
             position: absolute; bottom: -10px; 
-            background: #ff4500; /* Laranja Fogo */
+            background: #ff4500; 
             border-radius: 50%; opacity: 0; 
             box-shadow: 0 0 10px #ff4500;
             animation: subirFogo linear infinite; 
@@ -56,7 +54,6 @@ F<!DOCTYPE html>
 
         .subtitulo { font-size: 1rem; color: #ffae00; margin-bottom: 40px; font-style: italic; }
 
-        /* Cartas Decorativas */
         .mesa-capa { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; }
         .carta-visual {
             width: 80px; height: 130px;
@@ -78,7 +75,6 @@ F<!DOCTYPE html>
         }
         .texto-reflexao p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 15px; }
 
-        /* Botão Dourado e Vermelho */
         .btn-pagar {
             background: linear-gradient(to bottom, #d4af37, #aa8412);
             color: #1a0000; padding: 18px 45px; border-radius: 50px;
@@ -113,28 +109,27 @@ F<!DOCTYPE html>
 
         <div class="texto-reflexao">
             <p>O povo cigano não rodeia a verdade. As cartas mostram exatamente o que você precisa saber, não o que você quer ouvir.</p>
-         F   <p><strong>Está preparado para ver o que está oculto no seu caminho?</strong></p>
+            <p><strong>Está preparado para ver o que está oculto no seu caminho?</strong></p>
         </div>
 
-       <a href="https://pag.ae/81jfFrspr/button" target="_blank" class="btn-pagar"> Consultar as Cartas (R$ 10,00) </a>
+        <a href="https://pag.ae/81jfFrspr/button?redirectURL=https://www.tarotestelar.com.br/retorno.php" target="_blank" class="btn-pagar"> Consultar as Cartas (R$ 10,00) </a>
 
         <div class="aviso-pix">
-    ⚠️ <strong>Pagamento via Pix:</strong><br>
-    Será feito um redirecionamento automático para a consulta após a aprovação.
-</div>
-   	 </div>
+            ⚠️ <strong>Pagamento via Pix:</strong><br>
+            Será feito um redirecionamento automático para a consulta após a aprovação.
+        </div>
+    </div>
 
     <script>
-        // Efeito de Fagulhas (Fogo)
         function acenderFogueira() {
             const container = document.getElementById('fogueira');
             for(let i=0; i < 35; i++) {
                 const p = document.createElement('div');
                 p.classList.add('fagulha');
                 p.style.left = Math.random() * 100 + '%';
-                p.style.width = Math.random() * 4 + 2 + 'px'; // Tamanhos variados
+                p.style.width = Math.random() * 4 + 2 + 'px';
                 p.style.height = p.style.width;
-                p.style.animationDuration = Math.random() * 2 + 3 + 's'; // Velocidade variada
+                p.style.animationDuration = Math.random() * 2 + 3 + 's';
                 p.style.animationDelay = Math.random() * 5 + 's';
                 container.appendChild(p);
             }
