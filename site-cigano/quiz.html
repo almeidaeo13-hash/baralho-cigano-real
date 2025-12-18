@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desvende seu Arquétipo de Prosperidade | Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Raleway:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ouro: #d4af37;
+            --vinho: #4a0000;
+            --preto: #0c0c0c;
+        }
+
+        body {
+            background-color: var(--preto);
+            color: white;
+            font-family: 'Raleway', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #quiz-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: linear-gradient(145deg, #1a0000, #330000);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid var(--ouro);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        h1 { font-family: 'Cinzel', serif; color: var(--ouro); margin-bottom: 30px; }
+        
+        .question { font-size: 1.2rem; margin-bottom: 25px; }
+
+        .options-container { display: flex; flex-direction: column; gap: 15px; }
+
+        button.option {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        button.option:hover {
+            background: var(--ouro);
+            color: var(--preto);
+            font-weight: bold;
+        }
+
+        #result { display: none; }
+        .arquetipo-nome { font-family: 'Cinzel', serif; color: var(--ouro); font-size: 2rem; margin: 20px 0; }
+
+        .btn-cta {
+            background-color: #25d366; /* Cor WhatsApp */
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-consulta {
+            background-color: var(--ouro);
+            color: var(--preto);
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <div id="quiz-content">
+        <h1>O que as Cartas dizem sobre sua Riqueza?</h1>
+        <div id="question-text" class="question">Se você encontrasse um baú antigo, o que esperaria encontrar dentro?</div>
+        <div class="options-container" id="options">
+            </div>
+    </div>
+
+    <div id="result">
+        <h2>Seu Arquétipo de Prosperidade é:</h2>
+        <div class="arquetipo-nome" id="arquetipo-display"></div>
+        <p id="arquetipo-desc"></p>
+        
+        <hr style="border: 0; border-top: 1px solid rgba(212,175,55,0.3); margin: 30px 0;">
+        
+        <h3>⚠️ Revelação Importante!</h3>
+        <p>Sua energia está pronta para receber, mas há um obstáculo oculto em seu caminho.</p>
+        
+        <a href="https://www.baralhociganoreal.com.br" class="btn-consulta">REVELAR OBSTÁCULO (CONSULTA R$ 10)</a>
+        <br><br>
+        <a id="whatsapp-share" href="#" target="_blank" class="btn-cta">Compartilhar Resultado no WhatsApp</a>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            q: "Como você se sente em relação a novos começos?",
+            options: ["Sinto medo, prefiro o seguro", "Sinto empolgação e foco", "Sinto que o destino cuidará", "Gosto de planejar cada passo"]
+        },
+        {
+            q: "Qual elemento mais te atrai?",
+            options: ["Fogo (Ação)", "Ouro (Poder)", "Cristal (Clareza)", "Moeda (Estabilidade)"]
+        }
+    ];
+
+    const results = [
+        { nome: "A Imperatriz", desc: "Você nasceu para a abundância. Sua energia atrai luxo e crescimento natural." },
+        { nome: "O Mago", desc: "Sua riqueza vem da sua mente. Você tem o poder de criar dinheiro do zero." },
+        { nome: "A Roda da Fortuna", desc: "Grandes mudanças financeiras estão por vir. Você está em um ciclo de colheita." }
+    ];
+
+    let currentQ = 0;
+
+    function loadQuestion() {
+        if (currentQ < questions.length) {
+            document.getElementById("question-text").innerText = questions[currentQ].q;
+            const optionsDiv = document.getElementById("options");
+            optionsDiv.innerHTML = "";
+            questions[currentQ].options.forEach((opt, index) => {
+                const btn = document.createElement("button");
+                btn.className = "option";
+                btn.innerText = opt;
+                btn.onclick = nextQuestion;
+                optionsDiv.appendChild(btn);
+            });
+        } else {
+            showResult();
+        }
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        loadQuestion();
+    }
+
+    function showResult() {
+        document.getElementById("quiz-content").style.display = "none";
+        const resultDiv = document.getElementById("result");
+        resultDiv.style.display = "block";
+
+        const randomRes = results[Math.floor(Math.random() * results.length)];
+        document.getElementById("arquetipo-display").innerText = randomRes.nome;
+        document.getElementById("arquetipo-desc").innerText = randomRes.desc;
+
+        // Configura link do WhatsApp
+        const msg = encodeURIComponent("Fiz o teste e descobri que meu arquétipo de riqueza é: " + randomRes.nome + "! Descubra o seu também aqui: " + window.location.href);
+        document.getElementById("whatsapp-share").href = "https://api.whatsapp.com/send?text=" + msg;
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
