@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Revelação do seu Eu | Baralho Cigano Real</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --ouro: #d4af37; --vinho: #4a0000; --preto: #0c0c0c; }
+        body { background-color: var(--preto); color: #e0e0e0; font-family: 'Raleway', sans-serif; text-align: center; padding: 20px; line-height: 1.6; }
+        .container { max-width: 600px; margin: 40px auto; background: linear-gradient(145deg, #1a0000, #250000); padding: 40px; border-radius: 20px; border: 1px solid var(--ouro); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { font-family: 'Cinzel', serif; color: var(--ouro); font-size: 1.8rem; margin-bottom: 30px; }
+        p { font-size: 1.1rem; margin-bottom: 20px; }
+        input { width: 80%; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--ouro); background: #000; color: white; font-size: 1.1rem; text-align: center; }
+        button { background: var(--ouro); color: black; border: none; padding: 18px 40px; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1rem; transition: transform 0.3s; }
+        button:hover { transform: scale(1.05); }
+        #resultado-astral { display: none; text-align: left; animation: fadeIn 2s; }
+        .destaque { color: var(--ouro); font-style: italic; font-weight: 600; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container" id="passo1">
+    <h1>Inicie sua Jornada de Descoberta</h1>
+    <p>O universo guarda padrões que moldam quem somos. Digite sua data de nascimento para que eu possa sentir sua frequência vibracional.</p>
+    <input type="date" id="dataNascimento">
+    <br>
+    <button onclick="revelarPerfil()">SENTIR MINHA ENERGIA</button>
+</div>
+
+<div class="container" id="resultado-astral">
+    <h1>O que eu sinto sobre você...</h1>
+    <div id="texto-revelacao" style="font-size: 1.1rem; color: #f0f0f0;"></div>
+    
+    <div style="text-align: center; margin-top: 40px;">
+        <p class="destaque">Isso ressoa com você? Há algo ainda mais profundo que as cartas querem te contar agora.</p>
+        <button onclick="window.location.href='quiz.html'">VER O MEU DESTINO AGORA</button>
+    </div>
+</div>
+
+<script>
+    function getPerfil(dia, mes) {
+        const perfis = [
+            {t: "Você é uma alma construída sobre a resiliência. Às vezes, o mundo vê apenas sua força, mas por trás dessa armadura existe uma busca profunda por segurança e significado. Você não suporta superficialidade; se for para fazer algo, que seja com propósito. Sinto que você carrega um peso que não é seu, tentando manter tudo em ordem enquanto seu coração pede um pouco de leveza."},
+            {t: "Sua mente é um oceano de possibilidades que raramente descansa. Você se sente diferente da maioria das pessoas, como se estivesse observando o mundo de uma perspectiva única. Sua inteligência é sua liberdade, mas também sua solidão. Sinto que você valoriza sua independência acima de tudo, mas no fundo, busca alguém que consiga entender seu silêncio sem que você precise explicar nada."},
+            {t: "Há uma sensibilidade profunda e quase mística em você. Você absorve o ambiente como uma esponja, sentindo as dores e alegrias de quem te cerca. Essa empatia é seu dom, mas muitas vezes te deixa exausto. Você sonha acordado porque o mundo real parece, às vezes, barulhento demais. Sinto que você está em um momento de transição, onde sua intuição está tentando te guiar para algo novo."},
+            {t: "Existe um fogo interno em você que ninguém consegue apagar. Você tem uma sede de vida e uma impaciência com quem não tem coragem. Mas por trás dessa impulsividade, existe um medo sutil de ser incompreendido. Você prefere lutar sozinho do que ser guiado por quem não admira. Sinto que sua energia está pedindo um novo desafio, algo que faça seu coração bater mais forte novamente."},
+            {t: "Você é o porto seguro em meio à tempestade. Valoriza o que é real, o que pode ser tocado, o que é leal. Mas essa busca por estabilidade às vezes te prende em situações que você já deveria ter deixado para trás. Você tem um gosto refinado e uma capacidade incrível de transformar o simples em especial. Sinto que você precisa aprender a soltar o controle para que a abundância flua sem esforço."},
+            {t: "Sua mente é ágil, curiosa e incrivelmente adaptável. Você tem o dom de se conectar com as pessoas, mas poucos conhecem o seu 'eu' verdadeiro que aparece quando as luzes se apagam. Você lida com dualidades constantes: quer estar em todo lugar, mas sente que pertence a lugar nenhum. Sinto que você está buscando uma resposta que está bem debaixo do seu nariz, mas o excesso de pensamentos te impede de ver."},
+            {t: "Suas raízes são profundas e suas emoções são seu bússola. Você cuida, protege e nutre, mas muitas vezes esquece de olhar para as próprias feridas. Há uma força ancestral em você, uma ligação com o passado que te dá sabedoria, mas que às vezes te causa melancolia. Sinto que seu lar interno está precisando de renovação; você deu muito de si aos outros ultimamente."},
+            {t: "Sua presença é magnética e você tem um brilho que incomoda quem vive nas sombras. Você nasceu para liderar, mas não pela força, e sim pela inspiração. Por trás dessa autoconfiança, existe uma necessidade imensa de ser validado e amado pelo que você é, e não pelo que você faz. Sinto que você está pronto para ocupar um lugar de destaque, mas o medo do julgamento ainda te freia."},
+            {t: "Você busca a perfeição não por ego, mas por acreditar que o mundo pode ser melhor. Sua clareza de pensamento é uma ferramenta poderosa, mas seu crítico interno é seu maior inimigo. Você vê detalhes que ninguém mais vê e isso te torna indispensável. Sinto que você está cansado de carregar a responsabilidade de ser o único que faz as coisas direito. É hora de confiar mais no fluxo da vida."},
+            {t: "O equilíbrio é sua busca eterna, mas seu coração é um campo de batalha entre a razão e a emoção. Você detesta conflitos e faz de tudo para manter a harmonia, às vezes sacrificando sua própria vontade. Sua elegância está na forma como você trata as pessoas. Sinto que você está em um dilema onde a decisão 'correta' parece difícil, mas a sua paz de espírito deve ser o peso mais importante na balança."},
+            {t: "Sua intensidade é o que te define; você não conhece o meio-termo. Ou é tudo ou é nada. Você enxerga através das máscaras e tem uma força de transformação que assusta os fracos. Mas essa profundidade também traz dores que você guarda em segredo absoluto. Sinto que você está passando por uma 'morte e renascimento' espiritual. O que se foi precisava ir, para que o novo eu possa emergir."},
+            {t: "Sua alma é uma viajante nata. Você não suporta gaiolas, sejam elas físicas ou emocionais. Sua busca pela verdade e pelo conhecimento te leva a lugares que outros têm medo de ir. Seu otimismo é uma arma poderosa contra a tristeza do mundo. Sinto que você está sentindo um chamado para uma nova aventura ou aprendizado, algo que vai expandir sua visão de mundo de uma forma que você nunca imaginou."}
+        ];
+        const datas = [19, 18, 20, 19, 20, 20, 22, 22, 22, 22, 21, 21];
+        let i = (mes === 12 && dia > 21) ? 0 : (dia > datas[mes - 1]) ? mes : mes - 1;
+        return perfis[i];
+    }
+
+    function revelarPerfil() {
+        const dataInput = document.getElementById('dataNascimento').value;
+        if(!dataInput) return alert("Por favor, selecione sua data.");
+        
+        const d = new Date(dataInput);
+        const perfil = getPerfil(d.getUTCDate(), d.getUTCMonth() + 1);
+        
+        document.getElementById('passo1').style.display = 'none';
+        const res = document.getElementById('resultado-astral');
+        res.style.display = 'block';
+        document.getElementById('texto-revelacao').innerHTML = `<p>${perfil.t}</p>`;
+    }
+</script>
+</body>
+</html>
